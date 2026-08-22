@@ -141,16 +141,13 @@ export default function SignUpPage() {
                       : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:border-slate-700'
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center justify-between">
                     <span className="font-bold text-xs text-slate-100 flex items-center gap-1.5">
                       <Users className="w-3.5 h-3.5 text-indigo-400" />
                       Employee
                     </span>
                     {formData.role === 'EMPLOYEE' && <Check className="w-4 h-4 text-indigo-400" />}
                   </div>
-                  <p className="text-[10px] text-slate-400 leading-snug">
-                    Clock in/out, apply leave, download payslips.
-                  </p>
                 </div>
 
                 <div
@@ -161,16 +158,13 @@ export default function SignUpPage() {
                       : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:border-slate-700'
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center justify-between">
                     <span className="font-bold text-xs text-slate-100 flex items-center gap-1.5">
                       <Shield className="w-3.5 h-3.5 text-purple-400" />
                       HR / Admin
                     </span>
                     {formData.role === 'ADMIN' && <Check className="w-4 h-4 text-purple-400" />}
                   </div>
-                  <p className="text-[10px] text-slate-400 leading-snug">
-                    Approve leave, payroll control, view all staff.
-                  </p>
                 </div>
               </div>
             </div>
