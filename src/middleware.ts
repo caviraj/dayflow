@@ -7,7 +7,7 @@ const rateLimitMap = new Map<string, { count: number; startTime: number }>();
 
 export default withAuth(
   function middleware(req) {
-    const ip = req.headers.get("x-forwarded-for") || req.ip || "127.0.0.1";
+    const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
     
     // Rate limit configuration
     const limit = 100; // max 100 requests

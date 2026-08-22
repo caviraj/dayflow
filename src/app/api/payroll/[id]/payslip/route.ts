@@ -36,11 +36,11 @@ function generatePayslipPDF(payroll: any): Promise<Buffer> {
       doc.text(`Base Salary: $${Number(payroll.baseSalary).toFixed(2)}`);
       doc.text(`Deductions:  $${Number(payroll.deductions).toFixed(2)}`);
       doc.moveDown();
-      doc.fontSize(14).text(`Net Pay:     $${Number(payroll.netPay).toFixed(2)}`, { bold: true });
+      doc.fontSize(14).text(`Net Pay:     $${Number(payroll.netPay).toFixed(2)}`);
 
       // Footer
       doc.moveDown(5);
-      doc.fontSize(10).text('This is a computer-generated document. No signature is required.', { align: 'center', color: 'grey' });
+      doc.fontSize(10).text('This is a computer-generated document. No signature is required.', { align: 'center' });
 
       doc.end();
     } catch (err) {
@@ -82,7 +82,7 @@ export async function GET(
     const pdfBuffer = await generatePayslipPDF(payroll);
 
     // Return the PDF
-    return new NextResponse(pdfBuffer, {
+    return new NextResponse(new Uint8Array(pdfBuffer), {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
