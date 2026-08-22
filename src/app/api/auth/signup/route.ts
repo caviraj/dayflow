@@ -43,6 +43,8 @@ export async function POST(req: Request) {
 
     const passwordHash = await bcrypt.hash(password, 12);
 
+    const deptValue = (department && department.trim() !== '') ? department : 'Management';
+
     // Create User and Employee in a transaction
     const user = await prisma.user.create({
       data: {
@@ -52,7 +54,7 @@ export async function POST(req: Request) {
         employee: {
           create: {
             employeeId,
-            department,
+            department: deptValue,
           },
         },
       },
