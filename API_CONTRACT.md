@@ -88,6 +88,128 @@ Sets HttpOnly cookie with JWT session. Returns NextAuth success JSON.
 
 ---
 
+## 2. Dashboards
+
+### 2.1 Employee Dashboard
+- **Endpoint**: `GET /employee/dashboard`
+- **Auth Requirement**: Yes
+- **Role Requirement**: `EMPLOYEE` or `ADMIN`
+- **Query Params**: `?userId=...` (Optional). If an `ADMIN` provides this, it fetches the specified employee's dashboard and creates an Audit Log entry.
+
+**Success Response (200 OK)**:
+```json
+{
+  "profileSummary": {
+    "employeeId": "string",
+    "department": "string",
+    "email": "string",
+    "role": "string",
+    "pictureUrl": "string | null"
+  },
+  "leaveBalance": { /* LeaveBalance object */ },
+  "recentAttendance": [ /* Array of 5 recent attendance records */ ],
+  "recentLeaves": [ /* Array of 5 recent leave requests */ ],
+  "recentAlerts": [ /* Array of 5 recent notifications */ ]
+}
+```
+
+### 2.2 Admin Dashboard
+- **Endpoint**: `GET /admin/dashboard`
+- **Auth Requirement**: Yes
+- **Role Requirement**: `ADMIN`
+
+**Success Response (200 OK)**:
+```json
+{
+  "metrics": {
+    "totalEmployees": "number",
+    "pendingLeaveRequests": "number",
+    "attendanceSummary": {
+      "PRESENT": "number",
+      "ABSENT": "number"
+    }
+  },
+  "leaveApprovalQueue": [ /* Array of 5 pending leave requests */ ]
+}
+```
+
+---
+
+## 3. Profiles
+
+### 3.1 Get Profile
+- **Endpoint**: `GET /profile/[userId]`
+- **Auth Requirement**: Yes
+- **Role Requirement**: `EMPLOYEE` (can only fetch self) or `ADMIN` (can fetch anyone, logged)
+
+**Success Response (200 OK)**:
+```json
+{
+  "id": "string",
+  "employeeId": "string",
+  "department": "string",
+  "address": "string",
+  "phone": "string",
+  "pictureUrl": "string",
+  "user": { "email": "string", "role": "string" },
+  "payrolls": [],
+  "documents": []
+}
+```
+
+### 3.2 Update Profile
+- **Endpoint**: `PATCH /profile/[userId]`
+- **Auth Requirement**: Yes
+- **Role Requirement**: `EMPLOYEE` (can only update self) or `ADMIN` (can update anyone, logged)
+
+**Request Body (Employee)**:
+```json
+{
+  "address": "string (optional)",
+  "phone": "string (optional)",
+  "pictureUrl": "string (url, optional)"
+}
+```
+
+**Request Body (Admin)**:
+```json
+{
+  "address": "string (optional)",
+  "phone": "string (optional)",
+  "pictureUrl": "string (url, optional)",
+  "department": "string (optional)",
+  "employeeId": "string (optional)"
+}
+```
+
+**Success Response (200 OK)**:
+Returns updated profile object.
+
+---
+
+## 4. Admin Operations
+
+### 4.1 List Employees
+- **Endpoint**: `GET /admin/employees`
+- **Auth Requirement**: Yes
+- **Role Requirement**: `ADMIN`
+- **Query Params**: `?page=1&limit=50`
+
+**Success Response (200 OK)**:
+```json
+{
+  "data": [ /* Array of employee objects */ ],
+  "meta": {
+    "total": "number",
+    "page": "number",
+    "limit": "number",
+    "totalPages": "number"
+  }
+}
+```
+
+---
+
 ## Shared Enums (Reference)
 
 ```typescript
