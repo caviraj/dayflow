@@ -357,6 +357,94 @@ Returns the updated Leave Request object. This transaction also dynamically dedu
 
 ---
 
+## 7. Payroll
+
+### 7.1 Query Payroll History
+- **Endpoint**: `GET /payroll`
+- **Auth Requirement**: Yes
+- **Role Requirement**: `EMPLOYEE` (sees own history) or `ADMIN` (sees all, or filter by `userId`)
+- **Query Params**:
+  - `userId`: string (optional, ADMIN only)
+  - `page`: number (default: 1)
+  - `limit`: number (default: 50)
+
+**Success Response (200 OK)**:
+```json
+{
+  "data": [
+    {
+      "id": "string",
+      "employeeId": "string",
+      "periodStart": "2023-11-01T00:00:00.000Z",
+      "periodEnd": "2023-11-30T00:00:00.000Z",
+      "baseSalary": 5000.00,
+      "deductions": 200.00,
+      "netPay": 4800.00,
+      "payslipUrl": null
+    }
+  ],
+  "meta": {
+    "total": 12,
+    "page": 1,
+    "limit": 50,
+    "totalPages": 1
+  }
+}
+```
+
+### 7.2 Get Single Payroll Record
+- **Endpoint**: `GET /payroll/[id]`
+- **Auth Requirement**: Yes
+- **Role Requirement**: `EMPLOYEE` (if belongs to them) or `ADMIN`
+
+**Success Response (200 OK)**: Returns the payroll object detailed above.
+
+### 7.3 Create Payroll Record (Admin)
+- **Endpoint**: `POST /admin/payroll`
+- **Auth Requirement**: Yes
+- **Role Requirement**: `ADMIN` only
+
+**Request Body**:
+```json
+{
+  "employeeId": "string (cuid)",
+  "periodStart": "YYYY-MM-DD",
+  "periodEnd": "YYYY-MM-DD",
+  "baseSalary": 5000.00,
+  "deductions": 200.00
+}
+```
+
+**Success Response (201 Created)**: Returns the newly created payroll object with auto-calculated `netPay`.
+
+### 7.4 Update Payroll Record (Admin)
+- **Endpoint**: `PATCH /admin/payroll/[id]`
+- **Auth Requirement**: Yes
+- **Role Requirement**: `ADMIN` only
+
+**Request Body**:
+```json
+{
+  "baseSalary": 5500.00, // optional
+  "deductions": 100.00   // optional
+}
+```
+
+**Success Response (200 OK)**: Returns the updated payroll object with recalculated `netPay`.
+
+### 7.5 Generate Payslip PDF
+- **Endpoint**: `GET /payroll/[id]/payslip`
+- **Auth Requirement**: Yes
+- **Role Requirement**: `EMPLOYEE` (own) or `ADMIN`
+
+**Success Response (200 OK)**:
+Returns a binary PDF file stream.
+Headers:
+- `Content-Type: application/pdf`
+- `Content-Disposition: attachment; filename="payslip-EMP-001-2023-11-01.pdf"`
+
+---
+
 ## Shared Enums (Reference)
 
 ```typescript
