@@ -210,6 +210,75 @@ Returns updated profile object.
 
 ---
 
+## 5. Attendance
+
+### 5.1 Check In
+- **Endpoint**: `POST /attendance/check-in`
+- **Auth Requirement**: Yes
+- **Role Requirement**: `EMPLOYEE` or `ADMIN`
+
+**Success Response (201 Created)**:
+```json
+{
+  "id": "string",
+  "employeeId": "string",
+  "date": "2023-10-27T00:00:00.000Z",
+  "checkIn": "2023-10-27T08:30:00.000Z",
+  "checkOut": null,
+  "status": "PRESENT"
+}
+```
+*Note: Fails with 400 if already checked in today.*
+
+### 5.2 Check Out
+- **Endpoint**: `POST /attendance/check-out`
+- **Auth Requirement**: Yes
+- **Role Requirement**: `EMPLOYEE` or `ADMIN`
+
+**Success Response (200 OK)**:
+```json
+{
+  "id": "string",
+  "checkOut": "2023-10-27T17:30:00.000Z",
+  "status": "PRESENT | HALF_DAY"
+}
+```
+
+### 5.3 Query Attendance
+- **Endpoint**: `GET /attendance`
+- **Auth Requirement**: Yes
+- **Role Requirement**: `EMPLOYEE` (can only see own records) or `ADMIN` (can see all records or filter)
+- **Query Params**: 
+  - `startDate`: YYYY-MM-DD (optional)
+  - `endDate`: YYYY-MM-DD (optional)
+  - `userId`: string (optional, ADMIN only)
+  - `page`: number (default: 1)
+  - `limit`: number (default: 50)
+
+**Success Response (200 OK)**:
+```json
+{
+  "data": [
+    {
+      "id": "string",
+      "date": "string (ISO)",
+      "checkIn": "string (ISO) | null",
+      "checkOut": "string (ISO) | null",
+      "status": "PRESENT | ABSENT | HALF_DAY | LEAVE",
+      "employee": { "employeeId": "string", "department": "string" } // Only present if Admin fetches all
+    }
+  ],
+  "meta": {
+    "total": 100,
+    "page": 1,
+    "limit": 50,
+    "totalPages": 2
+  }
+}
+```
+
+---
+
 ## Shared Enums (Reference)
 
 ```typescript
