@@ -58,9 +58,10 @@ export function Navbar() {
   };
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
+  const dashboardHref = role === 'ADMIN' ? '/dashboard/admin' : '/dashboard/employee';
 
   const navItems = [
-    { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { label: 'Dashboard', href: dashboardHref, icon: LayoutDashboard },
     { label: 'Profile', href: '/profile', icon: User },
     { label: 'Attendance', href: '/attendance', icon: CalendarCheck },
     { label: 'Leave', href: '/leave', icon: CalendarDays },
@@ -72,7 +73,7 @@ export function Navbar() {
     <nav className="glass-panel border-b border-slate-800/80 sticky top-0 z-40 px-4 lg:px-8 py-3.5 shadow-2xl backdrop-blur-xl">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Brand */}
-        <Link href="/dashboard" className="flex items-center gap-3 group">
+        <Link href={dashboardHref} className="flex items-center gap-3 group">
           <div className="relative">
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition-all duration-300">
               <span className="font-black text-white text-xl tracking-tighter">D</span>
