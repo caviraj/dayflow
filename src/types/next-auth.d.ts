@@ -1,4 +1,4 @@
-import { Role } from '@prisma/client';
+export type Role = 'EMPLOYEE' | 'ADMIN';
 import NextAuth, { DefaultSession } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 

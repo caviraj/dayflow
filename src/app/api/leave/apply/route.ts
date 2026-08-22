@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
-import { LeaveType } from '@prisma/client';
+type LeaveType = 'PAID' | 'SICK' | 'UNPAID';
 
 const applyLeaveSchema = z.object({
   type: z.enum(['PAID', 'SICK', 'UNPAID']),

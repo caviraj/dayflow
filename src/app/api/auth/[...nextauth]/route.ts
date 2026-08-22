@@ -2,7 +2,7 @@ import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcrypt';
-import { Role } from '@prisma/client';
+import { Role } from '@/types/next-auth';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -39,7 +39,7 @@ export const authOptions: NextAuthOptions = {
         return {
           id: user.id,
           email: user.email,
-          role: user.role,
+          role: user.role as Role,
           employeeId: user.employee?.employeeId,
         };
       },

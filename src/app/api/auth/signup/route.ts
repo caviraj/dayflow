@@ -45,12 +45,15 @@ export async function POST(req: Request) {
 
     const deptValue = (department && department.trim() !== '') ? department : 'Management';
 
+    const isDevOrDummyKey = !process.env.RESEND_API_KEY || process.env.RESEND_API_KEY === 're_123456789';
+
     // Create User and Employee in a transaction
     const user = await prisma.user.create({
       data: {
         email,
         passwordHash,
         role,
+        emailVerified: isDevOrDummyKey ? new Date() : null,
         employee: {
           create: {
             employeeId,
