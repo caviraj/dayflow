@@ -49,7 +49,10 @@ export default function SignUpPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || 'Registration failed');
+        const errorMsg = typeof data.error === 'string' 
+          ? data.error 
+          : (data.error?.fieldErrors ? Object.values(data.error.fieldErrors).flat().join(', ') : data.message || 'Registration failed');
+        throw new Error(errorMsg);
       }
 
       router.push('/signin?registered=true');
