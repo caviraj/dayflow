@@ -1,7 +1,9 @@
-import { PrismaClient, Role } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
+
+const Role = { ADMIN: 'ADMIN', EMPLOYEE: 'EMPLOYEE' } as const;
 
 const DEPARTMENTS = ['Engineering', 'Sales', 'HR', 'Marketing'];
 

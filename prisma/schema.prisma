@@ -3,39 +3,15 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
-}
-
-enum Role {
-  EMPLOYEE
-  ADMIN
-}
-
-enum AttendanceStatus {
-  PRESENT
-  ABSENT
-  HALF_DAY
-  LEAVE
-}
-
-enum LeaveType {
-  PAID
-  SICK
-  UNPAID
-}
-
-enum LeaveStatus {
-  PENDING
-  APPROVED
-  REJECTED
 }
 
 model User {
   id            String    @id @default(cuid())
   email         String    @unique
   passwordHash  String
-  role          Role      @default(EMPLOYEE)
+  role          String    @default("EMPLOYEE")
   emailVerified DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -65,31 +41,31 @@ model Employee {
 }
 
 model Attendance {
-  id         String           @id @default(cuid())
+  id         String   @id @default(cuid())
   employeeId String
-  employee   Employee         @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  date       DateTime         @db.Date
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  date       DateTime
   checkIn    DateTime?
   checkOut   DateTime?
-  status     AttendanceStatus
-  createdAt  DateTime         @default(now())
-  updatedAt  DateTime         @updatedAt
+  status     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@unique([employeeId, date])
 }
 
 model LeaveRequest {
-  id         String      @id @default(cuid())
+  id         String   @id @default(cuid())
   employeeId String
-  employee   Employee    @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  type       LeaveType
-  startDate  DateTime    @db.Date
-  endDate    DateTime    @db.Date
-  status     LeaveStatus @default(PENDING)
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  type       String
+  startDate  DateTime
+  endDate    DateTime
+  status     String   @default("PENDING")
   remarks    String?
   adminNotes String?
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model LeaveBalance {
@@ -104,17 +80,17 @@ model LeaveBalance {
 }
 
 model Payroll {
-  id            String   @id @default(cuid())
-  employeeId    String
-  employee      Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  periodStart   DateTime @db.Date
-  periodEnd     DateTime @db.Date
-  baseSalary    Decimal  @db.Decimal(10, 2)
-  deductions    Decimal  @default(0.00) @db.Decimal(10, 2)
-  netPay        Decimal  @db.Decimal(10, 2)
-  payslipUrl    String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id          String   @id @default(cuid())
+  employeeId  String
+  employee    Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  periodStart DateTime
+  periodEnd   DateTime
+  baseSalary  Float
+  deductions  Float    @default(0.0)
+  netPay      Float
+  payslipUrl  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Document {
@@ -132,7 +108,7 @@ model AuditLog {
   userId    String?
   user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   action    String
-  details   String   @db.Text
+  details   String
   createdAt DateTime @default(now())
 }
 
