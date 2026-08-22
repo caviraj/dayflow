@@ -445,6 +445,69 @@ Headers:
 
 ---
 
+## 8. Notifications
+
+### 8.1 List Notifications
+- **Endpoint**: `GET /notifications`
+- **Auth Requirement**: Yes
+- **Role Requirement**: `EMPLOYEE` or `ADMIN`
+- **Query Params**:
+  - `page`: number (default: 1)
+  - `limit`: number (default: 50)
+
+**Success Response (200 OK)**:
+```json
+{
+  "data": [
+    {
+      "id": "string",
+      "title": "string",
+      "message": "string",
+      "isRead": false,
+      "createdAt": "2023-11-01T10:00:00.000Z"
+    }
+  ],
+  "meta": { "total": 10, "page": 1, "limit": 50, "totalPages": 1 }
+}
+```
+
+### 8.2 Mark as Read
+- **Endpoint**: `PATCH /notifications/[id]/read`
+- **Auth Requirement**: Yes
+- **Role Requirement**: `EMPLOYEE` or `ADMIN` (own notifications only)
+
+**Success Response (200 OK)**: Returns the updated notification object with `isRead: true`.
+
+---
+
+## 9. Reports (Admin)
+
+### 9.1 Export Attendance CSV
+- **Endpoint**: `GET /reports/attendance`
+- **Auth Requirement**: Yes
+- **Role Requirement**: `ADMIN` only
+- **Query Params**:
+  - `startDate`: YYYY-MM-DD (optional)
+  - `endDate`: YYYY-MM-DD (optional)
+
+**Success Response (200 OK)**:
+Returns a CSV file stream.
+Headers: `Content-Type: text/csv`, `Content-Disposition: attachment; filename="attendance_report_X.csv"`
+
+### 9.2 Export Payroll CSV
+- **Endpoint**: `GET /reports/payroll`
+- **Auth Requirement**: Yes
+- **Role Requirement**: `ADMIN` only
+- **Query Params**:
+  - `startDate`: YYYY-MM-DD (optional)
+  - `endDate`: YYYY-MM-DD (optional)
+
+**Success Response (200 OK)**:
+Returns a CSV file stream.
+Headers: `Content-Type: text/csv`, `Content-Disposition: attachment; filename="payroll_report_X.csv"`
+
+---
+
 ## Shared Enums (Reference)
 
 ```typescript
