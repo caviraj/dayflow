@@ -279,6 +279,84 @@ Returns updated profile object.
 
 ---
 
+## 6. Leaves (Time-Off)
+
+### 6.1 Apply for Leave
+- **Endpoint**: `POST /leave/apply`
+- **Auth Requirement**: Yes
+- **Role Requirement**: `EMPLOYEE` or `ADMIN`
+
+**Request Body**:
+```json
+{
+  "type": "PAID | SICK | UNPAID",
+  "startDate": "YYYY-MM-DD",
+  "endDate": "YYYY-MM-DD",
+  "remarks": "string (optional)"
+}
+```
+
+**Success Response (201 Created)**:
+```json
+{
+  "id": "string",
+  "type": "PAID | SICK | UNPAID",
+  "startDate": "2023-11-01T00:00:00.000Z",
+  "endDate": "2023-11-03T00:00:00.000Z",
+  "status": "PENDING",
+  "remarks": "Vacation"
+}
+```
+
+### 6.2 Query Leave Requests
+- **Endpoint**: `GET /leave`
+- **Auth Requirement**: Yes
+- **Role Requirement**: `EMPLOYEE` (sees own) or `ADMIN` (sees all)
+- **Query Params**:
+  - `status`: string (optional, e.g. PENDING)
+  - `page`: number (default: 1)
+  - `limit`: number (default: 50)
+
+**Success Response (200 OK)**:
+```json
+{
+  "data": [
+    {
+      "id": "string",
+      "type": "PAID",
+      "startDate": "string",
+      "endDate": "string",
+      "status": "PENDING",
+      "employee": { "employeeId": "string", "department": "string" } // Only present if Admin
+    }
+  ],
+  "meta": {
+    "total": 5,
+    "page": 1,
+    "limit": 50,
+    "totalPages": 1
+  }
+}
+```
+
+### 6.3 Review Leave (Admin)
+- **Endpoint**: `POST /leave/[id]/review`
+- **Auth Requirement**: Yes
+- **Role Requirement**: `ADMIN` only
+
+**Request Body**:
+```json
+{
+  "action": "APPROVE | REJECT",
+  "adminNotes": "string (optional)"
+}
+```
+
+**Success Response (200 OK)**:
+Returns the updated Leave Request object. This transaction also dynamically deducts from `LeaveBalance` and seeds `Attendance` records.
+
+---
+
 ## Shared Enums (Reference)
 
 ```typescript
