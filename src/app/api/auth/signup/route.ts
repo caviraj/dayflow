@@ -17,7 +17,7 @@ const signupSchema = z.object({
     .regex(/[0-9]/, 'Password must contain at least one number')
     .regex(/[^A-Za-z0-9]/, 'Password must contain at least one special character'),
   role: z.enum(['EMPLOYEE', 'ADMIN']).default('EMPLOYEE'),
-  department: z.string().min(1, 'Department is required'),
+  department: z.string().optional().default('Management'),
 });
 
 export async function POST(req: Request) {
