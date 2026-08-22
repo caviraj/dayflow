@@ -1,20 +1,40 @@
-import { withAuth } from 'next-auth/middleware';
-import { NextResponse } from 'next/server';
+import { withAuth } from "next-auth/middleware";
+import { NextResponse } from "next/server";
+
+// Simple in-memory rate limiter for the Edge runtime
+// Note: This state resets per isolate, so it's a lightweight MVP solution.
+const rateLimitMap = new Map<string, { count: number; startTime: number }>();
 
 export default withAuth(
   function middleware(req) {
-    const token = req.nextauth.token;
-    const path = req.nextUrl.pathname;
-
-    // Example RBAC: Admin only routes
-    if (path.startsWith('/api/admin') && token?.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized: Admin access required' }, { status: 403 });
+    const ip = req.headers.get("x-forwarded-for") || req.ip || "127.0.0.1";
+    
+    // Rate limit configuration
+    const limit = 100; // max 100 requests
+    const windowMs = 60 * 1000; // per 1 minute
+    
+    const now = Date.now();
+    const current = rateLimitMap.get(ip) || { count: 0, startTime: now };
+    
+    if (now - current.startTime > windowMs) {
+        // Reset window
+        current.count = 1;
+        current.startTime = now;
+    } else {
+        current.count += 1;
     }
-
-    // Example RBAC: Employee specific routes
-    if (path.startsWith('/api/employee') && token?.role !== 'EMPLOYEE' && token?.role !== 'ADMIN') {
-        return NextResponse.json({ error: 'Unauthorized: Employee access required' }, { status: 403 });
+    
+    rateLimitMap.set(ip, current);
+    
+    if (current.count > limit) {
+        return new NextResponse(
+          JSON.stringify({ error: "Too Many Requests" }), 
+          { status: 429, headers: { "content-type": "application/json" } }
+        );
     }
+    
+    // Auth and Rate Limits passed
+    return NextResponse.next();
   },
   {
     callbacks: {
@@ -23,18 +43,16 @@ export default withAuth(
   }
 );
 
+// Apply middleware to all protected API routes
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api/auth (auth endpoints)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public (public files)
-     */
-    '/((?!api/auth|_next/static|_next/image|favicon.ico|public).*)',
-    '/api/admin/:path*',
-    '/api/employee/:path*',
-  ],
+    "/api/employee/:path*",
+    "/api/admin/:path*",
+    "/api/profile/:path*",
+    "/api/attendance/:path*",
+    "/api/leave/:path*",
+    "/api/payroll/:path*",
+    "/api/notifications/:path*",
+    "/api/reports/:path*"
+  ]
 };

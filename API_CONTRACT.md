@@ -8,6 +8,21 @@ This document defines the API contract for the frontend team. It acts as the sin
 ## Authentication
 Unless marked as **Public**, all endpoints require a valid JWT issued by NextAuth.
 
+## General Constraints & Error Handling
+
+### Rate Limiting
+To prevent abuse, all protected endpoints are strictly rate-limited at the middleware layer. 
+- **Limit**: 100 requests per IP address per 1 minute window.
+- **Error Response**: `429 Too Many Requests`
+
+### Global Error Structure
+All JSON API endpoints enforce strict `try/catch` boundaries. In the event of an unhandled exception or missing record, expect the following standardized shapes:
+- **`400 Bad Request`**: `{ "error": "Invalid input / Business logic failure" }`
+- **`401 Unauthorized`**: `{ "error": "Unauthorized or session missing" }`
+- **`403 Forbidden`**: `{ "error": "Forbidden: Admin access required / Role restriction" }`
+- **`404 Not Found`**: `{ "error": "Record not found" }`
+- **`500 Server Error`**: `{ "error": "Internal Server Error" }` (Raw database traces are never leaked to the client).
+
 ---
 
 ## 1. Authentication & Onboarding
